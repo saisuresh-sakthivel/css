@@ -1,0 +1,72 @@
+<html>
+<head>
+<style>
+::before{
+  box-sizing:border-box;
+}
+.teststyle{
+   position:relative;
+   width:256px;
+   height:3em;
+   font-size:12px;
+   background:#666;
+   border-radius:1.5em;
+}
+.teststyle::before{
+  content:attr(data-label);
+  display:flex;
+  align-items:center;
+  top: 0.5em;
+  left: 0.5em;
+  bottom: 0.5em;
+  position: absolute;
+  color:#FFFFFF;
+  width:calc(var(--width,0)*1%);
+  min-width:2em;
+  max-width: calc(100% - 1em);
+	background-color: #069;
+	border-radius: 1em;
+	padding: 1em;
+}
+</style>
+</head>
+<body>
+<div id="parentElement">
+   <span id="childElement">foo bar</span>
+</div>
+
+<script>
+// Create the new node to insert
+let newNode = document.createElement("span")
+
+// Get a reference to the parent node
+let parentDiv = document.getElementById("childElement").parentNode
+
+// Begin test case [ 1 ] : Existing childElement (all works correctly)
+let sp2 = document.getElementById("childElement")
+parentDiv.insertBefore(newNode, sp2)
+// End test case [ 1 ]
+
+// Begin test case [ 2 ] : childElement is of Type undefined 
+//let sp2 = undefined // Non-existent node of id "childElement"
+//parentDiv.insertBefore(newNode, sp2) // Implicit dynamic cast to type Node
+// End test case [ 2 ]
+
+// Begin test case [ 3 ] : childElement is of Type "undefined" ( string )
+//let sp2 = "undefined" // Non-existent node of id "childElement"
+//parentDiv.insertBefore(newNode, sp2) // Generates "Type Error: Invalid Argument" 
+// End test case [ 3 ]
+</script>
+<div class="teststyle" style="--width:2" data-label="Loading...">
+</div>
+<script>
+  let testElem = document.getElementsByClassName('teststyle')[0];
+  let myVar = setInterval(()=>{
+    let computedStyle = getComputedStyle(testElem);
+	const width = parseFloat(computedStyle.getPropertyValue('--width')||0);
+	if(width>=100) clearInterval(myVar);
+	testElem.style.setProperty('--width',width+.1);
+  },5);
+</script>
+</body>
+</html>
